@@ -1,21 +1,126 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# 🚀 Hustle Calculator
 
-# Run and deploy your AI Studio app
+A modern, offline-first productivity and work-time tracking application built with **Kotlin**, **Jetpack Compose**, **Material 3**, and **Room Database**.
 
-This contains everything you need to run your app locally.
+Hustle Calculator helps freelancers, students, creators, developers, and professionals accurately track their work sessions, analyze productivity, and build consistent work habits using real-time data—without relying on fake statistics or placeholder content.
 
-View your app in AI Studio: https://ai.studio/apps/9b26a751-1760-4420-aad4-9e47356e4bbb
+---
 
-## Run Locally
+## ✨ Features
 
-**Prerequisites:**  [Android Studio](https://developer.android.com/studio)
+* ⏱️ Real-time work timer
+* 🔔 Foreground notification with live timer
+* 📅 Productivity Calendar with color-based daily tracking
+* 📊 Daily, Weekly, Monthly & Lifetime analytics
+* 📈 Real-time productivity graphs
+* ✍️ Manual work entry for missed sessions
+* 🎯 Daily, Weekly & Monthly productivity goals
+* 🔥 Streak & consistency tracking
+* 📝 Session notes and task categories
+* 📂 JSON Backup & Restore
+* 📱 Offline-first architecture
+* 🌙 Light & Dark Mode
+* ⚡ Fast, stable and optimized for long-term use
 
+---
 
-1. Open Android Studio
-2. Select **Open** and choose the directory containing this project
-3. Allow Android Studio to fix any incompatibilities as it imports the project.
-4. Create a file named `.env` in the project directory and set `GEMINI_API_KEY` in that file to your Gemini API key (see `.env.example` for an example)
-5. Remove this line from the app's `build.gradle.kts` file: `signingConfig = signingConfigs.getByName("debugConfig")`
-6. Run the app on an emulator or physical device
+## 🛠️ Tech Stack
+
+* Kotlin
+* Jetpack Compose
+* Material 3
+* MVVM Architecture
+* Room Database
+* Hilt
+* Coroutines
+* Flow
+* DataStore
+* WorkManager
+* Navigation Compose
+
+---
+
+## 📱 Requirements
+
+* Android Studio (Latest Stable Version)
+* Android SDK 26+
+* JDK 17 or newer
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/hustle-calculator.git
+```
+
+### 2. Open the Project
+
+Open the project folder in Android Studio.
+
+### 3. Sync the Project
+
+Allow Android Studio to download Gradle dependencies automatically.
+
+### 4. Run the Application
+
+Connect an Android device or start an emulator, then click **Run**.
+
+---
+
+## 📂 Project Structure
+
+```text
+app/
+├── ui/
+├── data/
+├── database/
+├── repository/
+├── viewmodel/
+├── navigation/
+├── notification/
+├── backup/
+├── analytics/
+└── utils/
+```
+
+---
+
+## 💾 Backup & Restore
+
+Hustle Calculator supports complete offline backup.
+
+Export and import your data as a JSON file, including:
+
+* Work Sessions
+* Tasks
+* Notes
+* Goals
+* Analytics
+* Calendar Data
+* Settings
+* Achievements
+
+No cloud account is required.
+
+---
+
+## 🎯 Project Goals
+
+The primary goal of Hustle Calculator is to provide a clean, reliable, and privacy-focused productivity tracker that records real work sessions and transforms them into meaningful insights.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+## 👨‍💻 Developer
+
+Developed by **Ujjwal Yadav**
+
+If you find this project useful, consider giving it a ⭐ on GitHub.
