@@ -1,0 +1,6 @@
+{
+  "name": "Hustle Calculator",
+  "description": "A premium productivity tracker that measures actual working hours, analyzes focus, and builds consistency.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
