@@ -151,7 +151,7 @@ fun CalendarGrid(currentMonth: Calendar, sessions: List<WorkSession>, onDayClick
                 val endOfDay = startOfDay + 24 * 60 * 60 * 1000 - 1
                 
                 val daySessions = sessions.filter { it.startTime in startOfDay..endOfDay && it.state == "COMPLETED" }
-                val totalDuration = daySessions.sumOf { (it.endTime ?: it.startTime) - it.startTime }
+                val totalDuration = daySessions.sumOf { it.activeWorkMillis }
                 val hours = totalDuration.toFloat() / (1000 * 60 * 60)
                 
                 val color = when {

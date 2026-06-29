@@ -10,11 +10,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.SharingStarted
 import com.example.data.AppDatabase
 import com.example.data.entity.SessionBreak
 import com.example.data.entity.WorkSession
@@ -28,6 +31,13 @@ class ManualEntryViewModel(application: Application) : AndroidViewModel(applicat
     private val database = AppDatabase.getDatabase(application)
     private val workSessionDao = database.workSessionDao()
     private val sessionBreakDao = database.sessionBreakDao()
+    private val settingsRepository = com.example.data.repository.SettingsRepository(application)
+    
+    val customCategories = settingsRepository.customCategories.stateIn(
+        viewModelScope,
+        kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000),
+        emptyList<String>()
+    )
 
     fun saveSession(
         taskName: String,
@@ -53,7 +63,9 @@ class ManualEntryViewModel(application: Application) : AndroidViewModel(applicat
                 startTime = startTime,
                 endTime = endTime,
                 state = "COMPLETED",
-                notes = notes
+                notes = notes,
+                activeWorkMillis = totalMillis,
+                lastResumeTime = startTime
             )
             val sessionId = workSessionDao.insert(session)
             
@@ -84,6 +96,15 @@ fun ManualEntryScreen(
     var notes by remember { mutableStateOf("") }
     
     var selectedCalendar by remember { mutableStateOf(Calendar.getInstance()) }
+    
+    val customCategories by viewModel.customCategories.collectAsState()
+    val defaultCategories = listOf(
+        "Coding", "Study", "Video Editing", "Thumbnail Design", "Script Writing", 
+        "Research", "Client Work", "Freelancing", "Meeting", "College", "Reading", 
+        "Writing", "Design", "Gaming", "Exercise", "Business", "Personal", "Other"
+    )
+    val allCategories = (defaultCategories + customCategories).distinct()
+    var categoryExpanded by remember { mutableStateOf(false) }
     
     val context = androidx.compose.ui.platform.LocalContext.current
     
@@ -175,12 +196,34 @@ fun ManualEntryScreen(
                 modifier = Modifier.fillMaxWidth()
             )
             
-            OutlinedTextField(
-                value = category,
-                onValueChange = { category = it },
-                label = { Text("Category") },
-                modifier = Modifier.fillMaxWidth()
-            )
+            ExposedDropdownMenuBox(
+                expanded = categoryExpanded,
+                onExpandedChange = { categoryExpanded = !categoryExpanded }
+            ) {
+                OutlinedTextField(
+                    value = category,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Category") },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoryExpanded) },
+                    modifier = Modifier.menuAnchor().fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
+                )
+                ExposedDropdownMenu(
+                    expanded = categoryExpanded,
+                    onDismissRequest = { categoryExpanded = false }
+                ) {
+                    allCategories.forEach { cat ->
+                        DropdownMenuItem(
+                            text = { Text(cat) },
+                            onClick = {
+                                category = cat
+                                categoryExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
             
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 OutlinedTextField(

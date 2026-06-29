@@ -19,6 +19,9 @@ interface WorkSessionDao {
     @Query("SELECT * FROM work_sessions WHERE state = 'RUNNING' OR state = 'PAUSED' LIMIT 1")
     suspend fun getActiveSessionSync(): WorkSession?
 
+    @Query("SELECT DISTINCT taskName FROM work_sessions WHERE taskName != '' ORDER BY startTime DESC LIMIT 20")
+    fun getRecentTaskNames(): Flow<List<String>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(session: WorkSession): Long
 

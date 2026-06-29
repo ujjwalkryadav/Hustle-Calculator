@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 class SessionViewModel(application: Application) : AndroidViewModel(application) {
     private val database = AppDatabase.getDatabase(application)
     private val repository = SessionRepository(database.workSessionDao(), database.sessionBreakDao())
+    private val settingsRepository = com.example.data.repository.SettingsRepository(application)
 
     val activeSession: StateFlow<WorkSession?> = repository.activeSession.stateIn(
         viewModelScope,
@@ -28,6 +29,18 @@ class SessionViewModel(application: Application) : AndroidViewModel(application)
 
     private val _elapsedTimeMillis = MutableStateFlow(0L)
     val elapsedTimeMillis: StateFlow<Long> = _elapsedTimeMillis.asStateFlow()
+    
+    val customCategories: StateFlow<List<String>> = settingsRepository.customCategories.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        emptyList()
+    )
+
+    val recentTaskNames: StateFlow<List<String>> = repository.recentTaskNames.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        emptyList()
+    )
 
     init {
         // Simple timer loop
@@ -35,18 +48,12 @@ class SessionViewModel(application: Application) : AndroidViewModel(application)
             while(true) {
                 val session = repository.activeSession.firstOrNull()
                 if (session != null) {
-                    if (session.state == "RUNNING") {
-                        // Calculate elapsed time excluding breaks
-                        val breaks = repository.getBreaksForSession(session.id).firstOrNull() ?: emptyList()
-                        var totalBreakTime = 0L
-                        for (b in breaks) {
-                            val end = b.endTime ?: System.currentTimeMillis()
-                            totalBreakTime += (end - b.startTime)
-                        }
-                        
-                        val totalElapsed = System.currentTimeMillis() - session.startTime - totalBreakTime
-                        _elapsedTimeMillis.value = totalElapsed
+                    val totalElapsed = if (session.state == "RUNNING") {
+                        session.activeWorkMillis + (System.currentTimeMillis() - session.lastResumeTime)
+                    } else {
+                        session.activeWorkMillis
                     }
+                    _elapsedTimeMillis.value = totalElapsed
                 } else {
                     _elapsedTimeMillis.value = 0L
                 }
@@ -79,6 +86,14 @@ class SessionViewModel(application: Application) : AndroidViewModel(application)
             repository.stopSession(notes)
             stopService()
             onComplete()
+        }
+    }
+
+    fun addCustomCategory(category: String) {
+        viewModelScope.launch {
+            if (category.isNotBlank()) {
+                settingsRepository.addCustomCategory(category.trim())
+            }
         }
     }
 

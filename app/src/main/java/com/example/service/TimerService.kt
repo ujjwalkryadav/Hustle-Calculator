@@ -67,13 +67,11 @@ class TimerService : Service() {
             while (true) {
                 val session = repository.activeSession.firstOrNull()
                 if (session != null && (session.state == "RUNNING" || session.state == "PAUSED")) {
-                    val breaks = repository.getBreaksForSession(session.id).firstOrNull() ?: emptyList()
-                    var totalBreakTime = 0L
-                    for (b in breaks) {
-                        val end = b.endTime ?: System.currentTimeMillis()
-                        totalBreakTime += (end - b.startTime)
+                    val totalElapsed = if (session.state == "RUNNING") {
+                        session.activeWorkMillis + (System.currentTimeMillis() - session.lastResumeTime)
+                    } else {
+                        session.activeWorkMillis
                     }
-                    val totalElapsed = System.currentTimeMillis() - session.startTime - totalBreakTime
                     
                     val hours = (totalElapsed / (1000 * 60 * 60))
                     val minutes = ((totalElapsed / (1000 * 60)) % 60)
@@ -93,13 +91,14 @@ class TimerService : Service() {
                     var todayTotal = totalElapsed // Include current session
                     for (s in allSessions) {
                         if (s.startTime >= todayStart && s.state == "COMPLETED" && s.id != session.id) {
-                            todayTotal += ((s.endTime ?: s.startTime) - s.startTime)
+                            todayTotal += s.activeWorkMillis
                         }
                     }
                     
                     val tHours = (todayTotal / (1000 * 60 * 60))
                     val tMinutes = ((todayTotal / (1000 * 60)) % 60)
-                    val todayTotalStr = String.format("%02dh %02dm", tHours, tMinutes)
+                    val tSeconds = ((todayTotal / 1000) % 60)
+                    val todayTotalStr = String.format("%02dh %02dm %02ds", tHours, tMinutes, tSeconds)
                     
                     updateNotification(session.taskName, timeString, session.state, todayTotalStr)
                 } else {

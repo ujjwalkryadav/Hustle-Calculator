@@ -13,12 +13,15 @@ class SessionRepository(
     val allSessions: Flow<List<WorkSession>> = workSessionDao.getAllSessions()
     val allBreaks: Flow<List<SessionBreak>> = sessionBreakDao.getAllBreaks()
     val activeSession: Flow<WorkSession?> = workSessionDao.getActiveSession()
+    val recentTaskNames: Flow<List<String>> = workSessionDao.getRecentTaskNames()
 
     suspend fun startSession(taskName: String, category: String) {
+        val now = System.currentTimeMillis()
         val newSession = WorkSession(
             taskName = taskName,
             category = category,
-            startTime = System.currentTimeMillis(),
+            startTime = now,
+            lastResumeTime = now,
             state = "RUNNING"
         )
         workSessionDao.insert(newSession)
@@ -28,15 +31,13 @@ class SessionRepository(
     suspend fun pauseSession(reason: String) {
         val session = workSessionDao.getActiveSessionSync() ?: return
         if (session.state == "RUNNING") {
+            val now = System.currentTimeMillis()
+            val newActiveMillis = session.activeWorkMillis + (now - session.lastResumeTime)
             // Update session state
-            workSessionDao.update(session.copy(state = "PAUSED"))
-            // Create break
-            val newBreak = SessionBreak(
-                sessionId = session.id,
-                startTime = System.currentTimeMillis(),
-                reason = reason
-            )
-            sessionBreakDao.insert(newBreak)
+            workSessionDao.update(session.copy(
+                state = "PAUSED",
+                activeWorkMillis = newActiveMillis
+            ))
             android.util.Log.d("SessionRepository", "Database Save: Paused Session")
         }
     }
@@ -45,12 +46,10 @@ class SessionRepository(
         val session = workSessionDao.getActiveSessionSync() ?: return
         if (session.state == "PAUSED") {
             // Update session state
-            workSessionDao.update(session.copy(state = "RUNNING"))
-            // End active break
-            val activeBreak = sessionBreakDao.getActiveBreakSync(session.id)
-            if (activeBreak != null) {
-                sessionBreakDao.update(activeBreak.copy(endTime = System.currentTimeMillis()))
-            }
+            workSessionDao.update(session.copy(
+                state = "RUNNING",
+                lastResumeTime = System.currentTimeMillis()
+            ))
             android.util.Log.d("SessionRepository", "Database Save: Resumed Session")
         }
     }
@@ -58,19 +57,19 @@ class SessionRepository(
     suspend fun stopSession(notes: String) {
         val session = workSessionDao.getActiveSessionSync() ?: return
         
-        // If it was paused, we need to end the break first
-        if (session.state == "PAUSED") {
-            val activeBreak = sessionBreakDao.getActiveBreakSync(session.id)
-            if (activeBreak != null) {
-                sessionBreakDao.update(activeBreak.copy(endTime = System.currentTimeMillis()))
-            }
+        val now = System.currentTimeMillis()
+        val finalActiveMillis = if (session.state == "RUNNING") {
+            session.activeWorkMillis + (now - session.lastResumeTime)
+        } else {
+            session.activeWorkMillis
         }
 
         workSessionDao.update(
             session.copy(
                 state = "COMPLETED",
-                endTime = System.currentTimeMillis(),
-                notes = notes
+                endTime = now,
+                notes = notes,
+                activeWorkMillis = finalActiveMillis
             )
         )
         android.util.Log.d("SessionRepository", "Database Save: Stopped Session")

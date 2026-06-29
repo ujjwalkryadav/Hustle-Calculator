@@ -92,14 +92,15 @@ fun DayDetailsScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                val totalDuration = sessions.sumOf { (it.endTime ?: it.startTime) - it.startTime }
+                val totalDuration = sessions.sumOf { it.activeWorkMillis }
                 val hours = (totalDuration / (1000 * 60 * 60))
                 val minutes = ((totalDuration / (1000 * 60)) % 60)
+                val seconds = ((totalDuration / 1000) % 60)
                 
                 item {
                     Card(modifier = Modifier.fillMaxWidth()) {
                         Column(modifier = Modifier.padding(16.dp)) {
-                            Text("Total Work Time: ${hours}h ${minutes}m", fontWeight = FontWeight.Bold)
+                            Text("Total Work Time: ${hours}h ${minutes}m ${seconds}s", fontWeight = FontWeight.Bold)
                             Text("Total Sessions: ${sessions.size}")
                         }
                     }
@@ -139,10 +140,11 @@ fun DayDetailsScreen(
                             }
                             Text("Category: ${session.category}", style = MaterialTheme.typography.bodySmall)
                             
-                            val sDuration = (session.endTime ?: session.startTime) - session.startTime
+                            val sDuration = session.activeWorkMillis
                             val sHours = (sDuration / (1000 * 60 * 60))
                             val sMins = ((sDuration / (1000 * 60)) % 60)
-                            Text("Duration: ${sHours}h ${sMins}m", style = MaterialTheme.typography.bodySmall)
+                            val sSecs = ((sDuration / 1000) % 60)
+                            Text("Duration: ${sHours}h ${sMins}m ${sSecs}s", style = MaterialTheme.typography.bodySmall)
                             
                             if (session.notes.isNotEmpty()) {
                                 Spacer(modifier = Modifier.height(4.dp))

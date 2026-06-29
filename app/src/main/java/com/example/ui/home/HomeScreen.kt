@@ -43,8 +43,9 @@ fun HomeScreen(
     
     val hours = (todayDuration / (1000 * 60 * 60))
     val minutes = ((todayDuration / (1000 * 60)) % 60)
+    val seconds = ((todayDuration / 1000) % 60)
     
-    val formattedDuration = String.format("%02dh %02dm", hours, minutes)
+    val formattedDuration = String.format("%02dh %02dm %02ds", hours, minutes, seconds)
     val progress = (todayDuration.toFloat() / (8 * 60 * 60 * 1000)).coerceIn(0f, 1f)
 
     Scaffold(
@@ -236,7 +237,8 @@ fun GoalProgressRing(progress: Float, formattedDuration: String) {
 fun DashboardCards(todayDuration: String, weeklyDuration: Long) {
     val wHours = (weeklyDuration / (1000 * 60 * 60))
     val wMinutes = ((weeklyDuration / (1000 * 60)) % 60)
-    val formattedWeekly = String.format("%02dh %02dm", wHours, wMinutes)
+    val wSeconds = ((weeklyDuration / 1000) % 60)
+    val formattedWeekly = String.format("%02dh %02dm %02ds", wHours, wMinutes, wSeconds)
 
     Row(
         modifier = Modifier.fillMaxWidth(),

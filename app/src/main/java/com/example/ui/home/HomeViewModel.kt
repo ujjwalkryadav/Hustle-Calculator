@@ -41,7 +41,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     val todayDurationMillis = repository.allSessions.map { sessions ->
         val todayStart = getStartOfToday()
         sessions.filter { it.startTime >= todayStart && it.state == "COMPLETED" }
-            .sumOf { (it.endTime ?: it.startTime) - it.startTime }
+            .sumOf { it.activeWorkMillis }
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000),
@@ -51,7 +51,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     val weeklyDurationMillis = repository.allSessions.map { sessions ->
         val weekStart = getStartOfWeek()
         sessions.filter { it.startTime >= weekStart && it.state == "COMPLETED" }
-            .sumOf { (it.endTime ?: it.startTime) - it.startTime }
+            .sumOf { it.activeWorkMillis }
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000),
@@ -64,7 +64,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             val startOfDay = getStartOfToday() - (i * 24 * 60 * 60 * 1000L)
             val endOfDay = startOfDay + 24 * 60 * 60 * 1000L - 1
             val daySessions = sessions.filter { it.startTime in startOfDay..endOfDay && it.state == "COMPLETED" }
-            val totalDuration = daySessions.sumOf { (it.endTime ?: it.startTime) - it.startTime }
+            val totalDuration = daySessions.sumOf { it.activeWorkMillis }
             data.add(totalDuration.toFloat() / (1000 * 60 * 60))
         }
         data
@@ -83,13 +83,11 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
         
         for (session in todaySessions) {
-            val end = session.endTime ?: session.startTime
-            val durationMs = end - session.startTime
             events.add(
                 TimelineEvent(
                     timeFormatted = timeFormat.format(Date(session.startTime)),
-                    title = session.taskName,
-                    durationFormatted = formatDuration(durationMs),
+                    title = session.category,
+                    durationFormatted = formatDuration(session.activeWorkMillis),
                     isBreak = false,
                     timestamp = session.startTime
                 )
@@ -120,7 +118,8 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private fun formatDuration(millis: Long): String {
         val hours = (millis / (1000 * 60 * 60))
         val minutes = ((millis / (1000 * 60)) % 60)
-        return if (hours > 0) "${hours}h ${minutes}m" else "${minutes}m"
+        val seconds = ((millis / 1000) % 60)
+        return if (hours > 0) "${hours}h ${minutes}m ${seconds}s" else if (minutes > 0) "${minutes}m ${seconds}s" else "${seconds}s"
     }
 
     private fun getStartOfToday(): Long {

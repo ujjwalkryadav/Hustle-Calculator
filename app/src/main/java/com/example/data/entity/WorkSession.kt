@@ -12,5 +12,7 @@ data class WorkSession(
     val state: String = "RUNNING", // RUNNING, PAUSED, COMPLETED
     val notes: String = "",
     val category: String = "Other",
-    val entryCreatedAt: Long = System.currentTimeMillis()
+    val entryCreatedAt: Long = System.currentTimeMillis(),
+    val activeWorkMillis: Long = 0L,
+    val lastResumeTime: Long = System.currentTimeMillis()
 )

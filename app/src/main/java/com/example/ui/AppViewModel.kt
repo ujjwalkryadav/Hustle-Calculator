@@ -64,7 +64,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                             startTime = obj.getLong("startTime"),
                             endTime = if (endT == -1L) null else endT,
                             state = obj.getString("state"),
-                            notes = obj.optString("notes", "")
+                            notes = obj.optString("notes", ""),
+                            activeWorkMillis = obj.optLong("activeWorkMillis", 0L),
+                            lastResumeTime = obj.optLong("lastResumeTime", obj.getLong("startTime"))
                         )
                         workSessionDao.insert(session)
                     }
