@@ -297,7 +297,7 @@ fun SettingsScreen(
             Text("Application Name: Hustle Calculator", style = MaterialTheme.typography.bodyMedium)
             Text("Installed Version: $versionName", style = MaterialTheme.typography.bodyMedium)
             Text("Build Number: $versionCode", style = MaterialTheme.typography.bodyMedium)
-            Text("Developer: Ujjwal Kumar Yadav", style = MaterialTheme.typography.bodyMedium)
+            Text("Developer: Ujjwal Kr Yadav", style = MaterialTheme.typography.bodyMedium)
             TextButton(
                 onClick = {
                     val intent = android.content.Intent(android.content.Intent.ACTION_VIEW, Uri.parse("https://github.com/ujjwalkryadav/Hustle-Calculator"))
