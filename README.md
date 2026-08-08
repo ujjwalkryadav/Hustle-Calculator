@@ -1,21 +1,94 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# 🚀 Hustle Calculator v2.0.0 – Major Stability & Smart Productivity Update
 
-# Run and deploy your AI Studio app
+## ✨ What's New
 
-This contains everything you need to run your app locally.
+Version **2.0** is the biggest update yet, bringing major improvements to stability, timer accuracy, session management, smart suggestions, and overall user experience.
 
-View your app in AI Studio: https://ai.studio/apps/9b26a751-1760-4420-aad4-9e47356e4bbb
+### ⏱️ High-Precision Timer
 
-## Run Locally
+* Added **second-level precision (HH:MM:SS)** for all work sessions.
+* Improved timer accuracy for both short and long work sessions.
+* More reliable real-time session tracking.
 
-**Prerequisites:**  [Android Studio](https://developer.android.com/studio)
+### 🛠️ Session Calculation Fixes
 
+* Fixed incorrect work time calculation after pausing and resuming.
+* Pause duration is no longer added to productive work time.
+* Active work time is now calculated accurately across multiple pause/resume cycles.
+* Improved session save reliability.
 
-1. Open Android Studio
-2. Select **Open** and choose the directory containing this project
-3. Allow Android Studio to fix any incompatibilities as it imports the project.
-4. Create a file named `.env` in the project directory and set `GEMINI_API_KEY` in that file to your Gemini API key (see `.env.example` for an example)
-5. Remove this line from the app's `build.gradle.kts` file: `signingConfig = signingConfigs.getByName("debugConfig")`
-6. Run the app on an emulator or physical device
+### 🔍 Smart Task Suggestions
+
+* Task suggestions now work like a search history.
+* Previously used task names automatically appear while typing.
+* Selecting a suggestion instantly fills the **"What are you working on?"** field.
+* Suggestions are generated from your actual work history instead of hardcoded values.
+
+### 📂 Improved Category System
+
+* Categories are now completely separate from task names.
+* Task suggestions no longer change the selected category.
+* Users can freely choose or create categories.
+* Custom categories are saved and available throughout the app.
+
+### ✍️ Manual Entry Improvements
+
+* Added support for selecting any previous work date.
+* Manual Entry now uses the same real-time category list as live sessions.
+* Custom categories automatically appear in Manual Entry.
+* Stores both:
+
+  * **Work Date**
+  * **Entry Created Date**
+
+### 📅 Productivity Calendar
+
+* Calendar now updates automatically after every session.
+* Tap any date to view detailed work history.
+* Calendar colors are generated using real productivity data only.
+* No placeholder or fake calendar entries.
+
+### 📊 Real-Time Analytics
+
+* Graphs now display only actual recorded data.
+* Dashboard, timeline, analytics, and calendar refresh automatically whenever data changes.
+* Removed all fake statistics and demo values.
+
+### 🔔 Notification Improvements
+
+* Improved foreground service behavior.
+* Better notification reliability during active work sessions.
+* Improved live timer handling.
+
+### 💾 Backup & Restore
+
+* Improved JSON Backup & Restore.
+* Better compatibility for importing previous user data.
+* More reliable backup creation and restoration.
+
+### ⚙️ Settings Improvements
+
+* Added **App Updates** section.
+* Displays the installed application version.
+* One-click shortcut to the official GitHub Tags page for downloading the latest APK.
+
+### 🚀 Overall Improvements
+
+* Better stability.
+* Improved performance.
+* More accurate session tracking.
+* Smarter productivity workflow.
+* Better data consistency.
+* Enhanced user experience.
+* Production-ready architecture.
+
+---
+
+## ❤️ Thank You
+
+Thank you for using **Hustle Calculator**!
+
+If you find any bugs or have ideas for new features, please open an Issue or submit a Pull Request. Every contribution helps make Hustle Calculator better for everyone.
+
+```
+```
